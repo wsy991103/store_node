@@ -1,0 +1,67 @@
+<form class="layui-form" action="">
+    <div class="layui-form-item">
+        <label class="layui-form-label">一级分类名</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" required lay-verify="required" placeholder="请输入标题" autocomplete="off"
+                class="layui-input" value="{{c1name}}">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    //Demo
+    layui.use(['form', 'jquery'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+            try {
+                // console.log(data.field);
+                let title = data.field.title;
+
+                //formData
+                let formData = new FormData();
+                formData.append('title', title);
+                formData.append('id', `{{id}}`);
+
+                //ajax
+                $.ajax({
+                    url: '/admin/first-list-edit-do',
+                    method: 'post',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    dataType: 'json',
+                    success: function (res) {
+                        // console.log(res);
+                        if (res.code == 200) {
+                            layer.msg(res.msg)
+                        }
+
+                        //刷新页面
+                        $('#showBody').load('/admin/first-list');
+
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
+
+                return false;
+            } catch (error) {
+                console.log(error);
+                return false;
+            }
+        });
+
+        //更新表单
+        form.render()
+    });
+</script>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>医院后端登陆</title>
+    <meta name="description" content="中山一院生殖中心" />
+    <meta name="keywords" content="中山一院生殖中心" />
+    <link rel="stylesheet" type="text/css" href="/login/styles/base.css" />
+    <link rel="stylesheet" type="text/css" href="/login/styles/doctorpage.css" />
+    <link rel="stylesheet" type="text/css" href="/login/styles/font-awesome.min.css" />
+    <script src="/login/scripts/jquery-1.10.2.min.js"></script>
+</head>
+
+<body>
+    <div class="wrapx">
+
+        <img src="/login/images/logo.png" class="logo" />
+        <div class="wrap-body">
+            <div class="loginpanle">
+                <h2 class="yahei">管理员登陆</h2>
+                <form id="adminlogin">
+                    <p class="resinfo"></p>
+
+                    <p class="user"><span><i class="fa fa-user fa-2x" aria-hidden="true"></i></span><input type="text"
+                            name="uname" id="uname" class="uname yahei" placeholder="请在此处输入用户名"></p>
+
+                    <p class="pwd"><span><i class="fa fa-lock fa-2x" aria-hidden="true"></i></span><input
+                            type="password" name="upwd" id="upwd" class="upwd yahei" placeholder="请输入登陆密码"></p>
+
+                    <p class="remember yahei"><a href="#">忘记密码</a><input type="checkbox" name="remember" value="1">
+                        记住登陆账号</p>
+
+                    <p class="submit"><input type="submit" name="mysubmit" value="登陆" class="yahei" /></p>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="cndns-banner">
+
+        <video id="myVideo" src="" width="100%" height="100%" autoplay="autoplay" loop="loop" muted="muted"
+            class="cndns-banner-video">您的浏览器不支持 video 标签。</video>
+
+    </div>
+    <script>
+        $(document).ready(function () {
+
+            $(window).load(function () {
+
+                var vid = document.getElementById("myVideo")
+                vid.onplay = function (e) {
+                    $('.cndns-banner-bg').hide()
+                };
+                /*随机切换视频banner*/
+                var videoNum = Math.floor(Math.random() * 3 + 1);
+                console.log(videoNum);
+                $('.cndns-banner-video').attr('src',
+                    '//flv.cndns.com/cn/webnew/images/cndns-banner-video-1.mp4')
+
+            })
+        })
+    </script>
+
+    <script type="text/javascript" src="/login/scripts/djcommon.js"></script>
+
+</body>
+
+</html>

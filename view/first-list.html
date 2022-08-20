@@ -1,0 +1,69 @@
+<table class="layui-table">
+    <colgroup>
+        <col width="150">
+        <col width="200">
+        <col width="200">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>一级分类名称</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{each result}}
+        <tr>
+            <td>{{$value.id}}</td>
+            <td>{{$value.c1name}}</td>
+            <td><a class="edit" id="{{$value.id}}" href="javascript:;">修改</a> | <a class="del" id="{{$value.id}}"
+                    href="javascript:;">删除</a></td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+<script>
+    layui.use(['jquery', 'layer'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+
+        //修改
+        $('.edit').click(function () {
+            //获取要修改的记录的id
+            var id = $(this).attr('id');
+            //载入修改表单
+            if (id) {
+                $('#showBody').load('/admin/first-list-edit?id=' + id);
+            }
+        })
+
+        //删除
+        $('.del').click(function () {
+            //获取要修改的记录的id
+            var id = $(this).attr('id');
+            //询问框
+            layer.confirm('您确定要删除吗？', {
+                btn: ['确定', '取消'] //按钮
+            }, function () {
+                //通知后端删除
+                if (id) {
+                    $.get('/admin/first-list-del', {
+                        id
+                    }, (res) => {
+                        if (res.code == 200) {
+                            layer.msg(res.msg);
+                            //刷新页面
+                            $('#showBody').load('/admin/first-list');
+                        } else {
+                            layer.msg(res.msg);
+                        }
+                    }, 'json');
+                }
+            }, function () {
+                layer.msg('已取消');
+            });
+        })
+
+    })
+</script>

@@ -1,0 +1,226 @@
+<form class="layui-form" action="">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">选择分类</label>
+        <div class="layui-input-block" style="display: flex;">
+            <select name="firstTitle" lay-verify="required" lay-filter="firstTitle">
+                <option value="">选择一级分类</option>
+                {{each result}}
+                <option value="{{$value.id}}">{{$value.c1name}}</option>
+                {{/each}}
+            </select>
+
+            <select name="secondTitle" lay-verify="required" lay-filter="secondTitle">
+                <option value="">选择二级分类</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">条形码</label>
+        <div class="layui-input-block">
+            <input type="text" name="code" required lay-verify="required" placeholder="请输入条形码号" autocomplete="off"
+                class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">上架日期</label>
+        <div class="layui-input-block">
+            <input required type="text" class="layui-input" name="whenOn" id="test1" autocomplete="off" />
+        </div>
+    </div>
+
+    <div class="layui-form-item" style="display: flex;">
+        <div>
+            <label class="layui-form-label">书名</label>
+            <div class="layui-input-block">
+                <input type="text" name="bookName" required lay-verify="required" placeholder="请输入书名" autocomplete="off"
+                    class="layui-input">
+            </div>
+        </div>
+
+        <div>
+            <label class="layui-form-label">作者</label>
+            <div class="layui-input-block">
+                <input type="text" name="author" required lay-verify="required" placeholder="请输入作者" autocomplete="off"
+                    class="layui-input">
+            </div>
+        </div>
+
+        <div>
+            <label class="layui-form-label">出版社</label>
+            <div class="layui-input-block">
+                <input type="text" name="whereFrom" required lay-verify="required" placeholder="请输入出版社"
+                    autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div>
+            <label class="layui-form-label">价格</label>
+            <div class="layui-input-block">
+                <input type="text" name="price" required lay-verify="required" placeholder="请输入价格" autocomplete="off"
+                    class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">封面</label>
+        <div class="layui-input-block">
+            <input type="file" name="poster" accept="image/*" />
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">轮播</label>
+        <div class="layui-input-block">
+            <input type="file" name="photos" multiple accept="image/*" />
+        </div>
+    </div>
+
+    <div class="layui-form-item" style="display: flex;">
+        <div>
+            <label class="layui-form-label">是否包邮</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="baoyou" lay-skin="switch">
+            </div>
+        </div>
+
+        <div>
+            <label class="layui-form-label">是否推荐</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="tuijian" lay-skin="switch">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">描述</label>
+        <div class="layui-input-block">
+            <textarea id="miaoshu" style="display: none"></textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    //Demo
+    layui.use(['form', 'jquery', 'layedit', 'laydate'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+        var layedit = layui.layedit;
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: "#test1", //指定元素
+        });
+
+        //建立编辑器
+        let index = layedit.build("miaoshu");
+
+        //选择二级分类
+        form.on('select(firstTitle)', function (data) {
+            // console.log(data.value); //得到被选中的值
+            //当前一级分类的id
+            let firstTitleId = data.value;
+            //获取二级分类
+            if (firstTitleId) {
+
+                $.get('/admin/fromFirstIdToGetSecondId', {
+                    firstTitleId
+                }, (res) => {
+                    // console.log(res);
+                    $('select[name="secondTitle"]').html(res);
+
+                    //更新表单
+                    form.render();
+                })
+            }
+        });
+
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+            try {
+                // console.log(data.field);
+                let {
+                    firstTitle,
+                    secondTitle,
+                    code,
+                    bookName,
+                    author,
+                    whereFrom,
+                    price,
+                    baoyou,
+                    tuijian,
+                    whenOn
+                } = data.field;
+
+                //封面
+                let poster = $("input[name='poster']")[0].files[0];
+
+                //轮播
+                let photos = $("input[name='photos']")[0].files;
+
+                //富文本编辑器的内容
+                let descript = layedit.getContent(index);
+
+                //formData
+                let formData = new FormData();
+                formData.append('firstTitle', firstTitle);
+                formData.append('secondTitle', secondTitle);
+                formData.append('code', code);
+                formData.append('bookName', bookName);
+                formData.append('author', author);
+                formData.append('whereFrom', whereFrom);
+                formData.append('price', price);
+                formData.append('baoyou', baoyou);
+                formData.append('tuijian', tuijian);
+                formData.append('poster', poster);
+                formData.append('descript', descript);
+                formData.append('whenOn', whenOn);
+                for (let i = 0; i < photos.length; i++) {
+                    formData.append('photos', photos[i]);
+                }
+
+                //ajax
+                $.ajax({
+                    url: '/admin/book-add-do',
+                    method: 'post',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    dataType: 'json',
+                    success: function (res) {
+                        // console.log(res);
+                        if (res.code == 200) {
+                            layer.msg(res.msg)
+                        }
+
+                        //刷新页面
+                        $('#showBody').load('/admin/book-add');
+
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                })
+
+                return false;
+            } catch (error) {
+                console.log(error);
+                return false;
+            }
+        });
+
+        //更新表单
+        form.render()
+    });
+</script>
